@@ -1,0 +1,31 @@
+datasource db {
+  provider = "postgresql"
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+model Make {
+  id           Int           @id @default(autoincrement())
+  makeId       Int           @unique
+  makeName     String
+  createdAt    DateTime      @default(now())
+  updatedAt    DateTime      @updatedAt
+  vehicleTypes VehicleType[]
+
+  @@index([makeName])
+}
+
+model VehicleType {
+  id         Int      @id @default(autoincrement())
+  typeId     Int
+  typeName   String
+  makeId     Int
+  make       Make     @relation(fields: [makeId], references: [makeId], onDelete: Cascade)
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+  @@unique([makeId, typeId])
+  @@index([makeId])
+}
