@@ -54,12 +54,12 @@ Ingestion is triggered explicitly via a standalone CLI command and is never trig
 
 ```mermaid
 flowchart LR
-    A[NHTSA XML API] --> B[NhtsaClientService\nHTTP + Retry]
-    B --> C[XmlParserService\nfast-xml-parser]
-    C --> D[NhtsaTransformerService\nStructured DTOs]
-    D --> E[NhtsaIngestionService\nConcurrency Pool]
-    E --> F[MakesRepository\nUpsert Transaction]
-    F --> G[PrismaService\nPg Adapter]
+    A[NHTSA XML API] --> B[NhtsaClientService]
+    B --> C[XmlParserService]
+    C --> D[NhtsaTransformerService]
+    D --> E[NhtsaIngestionService]
+    E --> F[MakesRepository]
+    F --> G[PrismaService]
     G --> H[(PostgreSQL)]
 ```
 
@@ -67,9 +67,9 @@ flowchart LR
 
 ```mermaid
 flowchart LR
-    A[GraphQL Client] --> B[VehicleResolver\n@Query]
+    A[GraphQL Client] --> B[VehicleResolver]
     B --> C[VehicleService]
-    C --> D[MakesRepository\nfindMany / findByMakeId]
+    C --> D[MakesRepository]
     D --> E[PrismaService]
     E --> F[(PostgreSQL)]
 ```
