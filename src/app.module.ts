@@ -5,6 +5,7 @@ import { AppService } from './app.service';
 import configuration from './config/configuration';
 import { validationSchema } from './config/validation';
 import { PrismaModule } from './prisma/prisma.module';
+import { NhtsaModule } from './nhtsa/nhtsa.module';
 
 @Module({
   imports: [
@@ -18,6 +19,7 @@ import { PrismaModule } from './prisma/prisma.module';
       },
     }),
     PrismaModule,
+    NhtsaModule,
   ],
   controllers: [AppController],
   providers: [AppService],

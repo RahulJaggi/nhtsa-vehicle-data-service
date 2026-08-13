@@ -11,7 +11,7 @@ export const validationSchema = Joi.object({
     .default('https://vpic.nhtsa.dot.gov/api'),
   NHTSA_GET_ALL_MAKES_URL: Joi.string()
     .uri()
-    .default('https://vpic.nhtsa.dot.gov/api/vehicles/getallmakes?format=json'),
+    .default('https://vpic.nhtsa.dot.gov/api/vehicles/getallmakes'),
   NHTSA_VEHICLE_TYPES_URL: Joi.string()
     .uri()
     .default('https://vpic.nhtsa.dot.gov/api/vehicles/GetVehicleTypesForMakeId'),
