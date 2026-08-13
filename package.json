@@ -7,6 +7,7 @@
   "license": "UNLICENSED",
   "scripts": {
     "build": "nest build",
+    "ingest": "node -e \"const fs = require('fs'); if (fs.existsSync('dist/cli/ingest.js')) { require('./dist/cli/ingest.js'); } else { require('ts-node/register'); require('./src/cli/ingest.ts'); }\"",
     "format": "prettier --write \"src/**/*.ts\" \"test/**/*.ts\"",
     "start": "nest start",
     "start:dev": "nest start --watch",

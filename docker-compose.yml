@@ -1,0 +1,45 @@
+services:
+  db:
+    image: postgres:15-alpine
+    container_name: nhtsa-db
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB:-nhtsa_db}
+      POSTGRES_USER: ${POSTGRES_USER:-rahuljaggi}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-secure_db_password}
+    ports:
+      - "5432:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U $$POSTGRES_USER -d $$POSTGRES_DB"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+    restart: unless-stopped
+
+  backend:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: nhtsa-backend
+    ports:
+      - "3000:3000"
+    environment:
+      NODE_ENV: production
+      PORT: 3000
+      DATABASE_URL: postgresql://${POSTGRES_USER:-rahuljaggi}:${POSTGRES_PASSWORD:-secure_db_password}@db:5432/${POSTGRES_DB:-nhtsa_db}?schema=public
+      NHTSA_BASE_URL: ${NHTSA_BASE_URL:-https://vpic.nhtsa.dot.gov/api}
+      NHTSA_GET_ALL_MAKES_URL: ${NHTSA_GET_ALL_MAKES_URL:-https://vpic.nhtsa.dot.gov/api/vehicles/getallmakes}
+      NHTSA_VEHICLE_TYPES_URL: ${NHTSA_VEHICLE_TYPES_URL:-https://vpic.nhtsa.dot.gov/api/vehicles/GetVehicleTypesForMakeId}
+      NHTSA_TIMEOUT: ${NHTSA_TIMEOUT:-5000}
+      NHTSA_MAX_RETRIES: ${NHTSA_MAX_RETRIES:-3}
+      NHTSA_CONCURRENCY: ${NHTSA_CONCURRENCY:-5}
+      LOG_LEVEL: ${LOG_LEVEL:-info}
+    depends_on:
+      db:
+        condition: service_healthy
+    restart: unless-stopped
+
+volumes:
+  pgdata:
+    name: nhtsa_pgdata
