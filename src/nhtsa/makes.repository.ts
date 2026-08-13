@@ -32,7 +32,6 @@ export class MakesRepository {
 
         // 3. Create the new vehicle types
         if (makeData.vehicleTypes && makeData.vehicleTypes.length > 0) {
-          // Remove duplicates inside payload if any
           const uniqueTypesMap = new Map<number, string>();
           for (const vt of makeData.vehicleTypes) {
             uniqueTypesMap.set(vt.typeId, vt.typeName);
@@ -56,5 +55,33 @@ export class MakesRepository {
       );
       throw error;
     }
+  }
+
+  /**
+   * Retrieves paginated makes including their vehicle types to avoid N+1 query problems.
+   */
+  async findMany(skip?: number, take?: number): Promise<any[]> {
+    return this.prisma.make.findMany({
+      skip,
+      take,
+      include: {
+        vehicleTypes: true,
+      },
+      orderBy: {
+        makeId: 'asc',
+      },
+    });
+  }
+
+  /**
+   * Retrieves a specific make by makeId including its vehicle types.
+   */
+  async findByMakeId(makeId: number): Promise<any | null> {
+    return this.prisma.make.findUnique({
+      where: { makeId },
+      include: {
+        vehicleTypes: true,
+      },
+    });
   }
 }

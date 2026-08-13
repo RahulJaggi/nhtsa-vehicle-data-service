@@ -4,6 +4,8 @@ import { XmlParserService } from './xml-parser.service';
 import { NhtsaTransformerService } from './nhtsa-transformer.service';
 import { MakesRepository } from './makes.repository';
 import { NhtsaIngestionService } from './nhtsa-ingestion.service';
+import { VehicleService } from './vehicle.service';
+import { VehicleResolver } from './vehicle.resolver';
 
 @Module({
   providers: [
@@ -12,6 +14,8 @@ import { NhtsaIngestionService } from './nhtsa-ingestion.service';
     NhtsaTransformerService,
     MakesRepository,
     NhtsaIngestionService,
+    VehicleService,
+    VehicleResolver,
   ],
   exports: [
     NhtsaClientService,
@@ -19,6 +23,8 @@ import { NhtsaIngestionService } from './nhtsa-ingestion.service';
     NhtsaTransformerService,
     MakesRepository,
     NhtsaIngestionService,
+    VehicleService,
+    VehicleResolver,
   ],
 })
 export class NhtsaModule {}
