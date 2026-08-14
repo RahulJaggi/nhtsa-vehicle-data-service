@@ -1,6 +1,6 @@
 import { Injectable, Logger } from '@nestjs/common';
-import { PrismaService } from '../prisma/prisma.service';
-import { TransformedMake } from './nhtsa-transformer.service';
+import { PrismaService } from '../../prisma/prisma.service';
+import { TransformedMake } from '../transformer/nhtsa-transformer.service';
 
 @Injectable()
 export class MakesRepository {

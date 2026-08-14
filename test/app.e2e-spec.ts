@@ -3,7 +3,7 @@ import { INestApplication } from '@nestjs/common';
 import request from 'supertest';
 import { App } from 'supertest/types';
 import { AppModule } from './../src/app.module';
-import { NhtsaIngestionService } from './../src/nhtsa/nhtsa-ingestion.service';
+import { NhtsaIngestionService } from './../src/nhtsa/ingestion/nhtsa-ingestion.service';
 import { PrismaService } from './../src/prisma/prisma.service';
 
 describe('NHTSA E2E Ingestion and GraphQL Flow (e2e)', () => {

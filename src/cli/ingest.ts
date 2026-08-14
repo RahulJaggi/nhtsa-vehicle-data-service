@@ -1,6 +1,6 @@
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from '../app.module';
-import { NhtsaIngestionService } from '../nhtsa/nhtsa-ingestion.service';
+import { NhtsaIngestionService } from '../nhtsa/ingestion/nhtsa-ingestion.service';
 import { PinoLoggerService } from '../logger/pino-logger.service';
 
 async function bootstrap() {

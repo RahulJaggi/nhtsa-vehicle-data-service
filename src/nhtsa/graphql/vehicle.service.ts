@@ -1,5 +1,5 @@
 import { Injectable, Logger, NotFoundException, InternalServerErrorException } from '@nestjs/common';
-import { MakesRepository } from './makes.repository';
+import { MakesRepository } from '../repository/makes.repository';
 
 @Injectable()
 export class VehicleService {
@@ -7,9 +7,6 @@ export class VehicleService {
 
   constructor(private readonly repository: MakesRepository) {}
 
-  /**
-   * Retrieves a list of vehicle makes with optional pagination.
-   */
   async getMakes(skip?: number, take?: number): Promise<any[]> {
     try {
       this.logger.debug(`Retrieving makes (skip: ${skip}, take: ${take})`);
@@ -20,10 +17,6 @@ export class VehicleService {
     }
   }
 
-  /**
-   * Retrieves a specific make by makeId.
-   * Throws NotFoundException if the make does not exist.
-   */
   async getMakeById(makeId: number): Promise<any> {
     let make: any;
     try {

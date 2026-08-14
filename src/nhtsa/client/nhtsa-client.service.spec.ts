@@ -5,7 +5,7 @@ import {
   NhtsaHttpException,
   NhtsaNetworkException,
   NhtsaTimeoutException,
-} from './nhtsa-exceptions';
+} from './nhtsa.exceptions';
 
 describe('NhtsaClientService', () => {
   let service: NhtsaClientService;

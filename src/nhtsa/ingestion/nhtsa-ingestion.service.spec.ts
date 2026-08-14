@@ -1,9 +1,9 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { NhtsaIngestionService } from './nhtsa-ingestion.service';
-import { NhtsaClientService } from './nhtsa-client.service';
-import { XmlParserService } from './xml-parser.service';
-import { NhtsaTransformerService } from './nhtsa-transformer.service';
-import { MakesRepository } from './makes.repository';
+import { NhtsaClientService } from '../client/nhtsa-client.service';
+import { XmlParserService } from '../parser/xml-parser.service';
+import { NhtsaTransformerService } from '../transformer/nhtsa-transformer.service';
+import { MakesRepository } from '../repository/makes.repository';
 import { ConfigService } from '@nestjs/config';
 
 describe('NhtsaIngestionService', () => {

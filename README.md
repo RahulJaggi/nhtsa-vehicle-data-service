@@ -130,17 +130,23 @@ nhtsa-vehicle-data-service/
 │   │   ├── logger.module.ts   # Global NestJS logger module
 │   │   └── pino-logger.service.ts  # Pino JSON logger implementation
 │   ├── nhtsa/
-│   │   ├── nhtsa.module.ts          # Feature module wiring all NHTSA services
-│   │   ├── nhtsa-client.service.ts  # HTTP client with retry and timeout
-│   │   ├── nhtsa-exceptions.ts      # Typed exception hierarchy (HTTP/Timeout/Network)
-│   │   ├── xml-parser.service.ts    # XML parsing using fast-xml-parser
-│   │   ├── xml-parse.exception.ts   # Typed XML parse exception
-│   │   ├── nhtsa-transformer.service.ts  # Raw parsed data → typed domain objects
-│   │   ├── nhtsa-ingestion.service.ts    # Orchestrates ingestion with concurrency pool
-│   │   ├── makes.repository.ts           # Prisma upsert and query repository
-│   │   ├── vehicle.service.ts            # Business logic for GraphQL reads
-│   │   ├── vehicle.resolver.ts           # GraphQL resolver (queries)
-│   │   └── vehicle.types.ts             # GraphQL ObjectType definitions
+│   │   ├── nhtsa.module.ts    # Feature module wiring all NHTSA providers
+│   │   ├── client/            # NHTSA HTTP API calls
+│   │   │   ├── nhtsa-client.service.ts  # HTTP client with retry and timeout
+│   │   │   └── nhtsa.exceptions.ts      # Typed exception hierarchy (HTTP/Timeout/Network)
+│   │   ├── parser/            # XML parsing only
+│   │   │   ├── xml-parser.service.ts    # XML parsing using fast-xml-parser
+│   │   │   └── xml-parse.exception.ts   # Typed XML parse exception
+│   │   ├── transformer/       # Data shape normalisation only
+│   │   │   └── nhtsa-transformer.service.ts  # Raw parsed data → typed domain objects
+│   │   ├── repository/        # PostgreSQL persistence only
+│   │   │   └── makes.repository.ts      # Prisma upsert and query repository
+│   │   ├── ingestion/         # Orchestration only
+│   │   │   └── nhtsa-ingestion.service.ts    # Wires client → parser → transformer → repo
+│   │   └── graphql/           # GraphQL layer
+│   │       ├── vehicle.resolver.ts      # @Query definitions
+│   │       ├── vehicle.service.ts       # Read logic for GraphQL queries
+│   │       └── vehicle.types.ts         # GraphQL ObjectType definitions (Make, VehicleType)
 │   └── prisma/
 │       └── prisma.service.ts    # PrismaClient with pg pool adapter lifecycle management
 ├── prisma/

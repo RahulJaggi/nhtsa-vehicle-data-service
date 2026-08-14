@@ -5,7 +5,7 @@ import {
   NhtsaHttpException,
   NhtsaNetworkException,
   NhtsaTimeoutException,
-} from './nhtsa-exceptions';
+} from './nhtsa.exceptions';
 
 @Injectable()
 export class NhtsaClientService {
