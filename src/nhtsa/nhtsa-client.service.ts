@@ -26,26 +26,21 @@ export class NhtsaClientService {
     }
   }
 
-  /**
-   * Fetches all makes from NHTSA in raw XML.
-   */
+  // returns raw XML — caller is responsible for parsing
   async getAllMakes(): Promise<string> {
     this.logger.log('Initiating request to fetch all makes from NHTSA');
     return this.fetchWithRetryAndTimeout(this.getAllMakesUrl);
   }
 
-  /**
-   * Fetches vehicle types for a specific make ID from NHTSA in raw XML.
-   */
+  // strip trailing slash so we don't end up with double slashes in the URL
   async getVehicleTypesForMakeId(makeId: number): Promise<string> {
     this.logger.log(`Initiating request to fetch vehicle types for Make ID: ${makeId}`);
     const url = `${this.vehicleTypesUrl.replace(/\/$/, '')}/${makeId}`;
     return this.fetchWithRetryAndTimeout(url);
   }
 
-  /**
-   * Executes fetch with timeout, custom error handling, and backoff retries.
-   */
+  // retries with exponential backoff: 1s, 2s, 4s, ...
+  // AbortController handles the timeout since fetch doesn't have one built in
   private async fetchWithRetryAndTimeout(url: string): Promise<string> {
     let attempt = 0;
     const baseDelayMs = 1000;

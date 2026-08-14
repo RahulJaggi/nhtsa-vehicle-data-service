@@ -14,6 +14,7 @@ export class PrismaService extends PrismaClient implements OnModuleInit, OnModul
       throw new Error('DATABASE_URL is not defined in configuration');
     }
 
+    // using the pg adapter so Prisma shares the same connection pool as the rest of the app
     const pool = new Pool({ connectionString: databaseUrl });
     pool.on('error', (err) => {
       console.error('PG Connection Pool Error:', err);
@@ -29,6 +30,7 @@ export class PrismaService extends PrismaClient implements OnModuleInit, OnModul
   }
 
   async onModuleDestroy() {
+    // disconnect Prisma first, then drain the pool
     await this.$disconnect();
     await this.pool.end();
   }

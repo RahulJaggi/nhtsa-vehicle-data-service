@@ -4,7 +4,7 @@ import { NhtsaIngestionService } from '../nhtsa/nhtsa-ingestion.service';
 import { PinoLoggerService } from '../logger/pino-logger.service';
 
 async function bootstrap() {
-  // Create Nest standalone application context (suppressing default Nest boot logging)
+  // spin up app context without starting the HTTP server
   const app = await NestFactory.createApplicationContext(AppModule, {
     logger: false,
   });
@@ -12,7 +12,7 @@ async function bootstrap() {
   const logger = app.get(PinoLoggerService);
   app.useLogger(logger);
 
-  // Parse numeric limit argument (robustly scan process.argv for the first positive integer)
+  // scan argv for the first positive integer — works regardless of how the script is invoked
   const limit = process.argv
     .map((arg) => parseInt(arg, 10))
     .find((num) => !isNaN(num) && num > 0);
@@ -38,6 +38,7 @@ async function bootstrap() {
 
     await app.close();
 
+    // exit 1 if any makes failed so CI/scripts can detect partial failures
     if (stats.failed > 0) {
       process.exit(1);
     } else {

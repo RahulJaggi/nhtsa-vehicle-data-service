@@ -15,10 +15,7 @@ export class XmlParserService {
     });
   }
 
-  /**
-   * Parses a raw XML string into a JavaScript object.
-   * Throws XmlParseException if the XML is empty or malformed.
-   */
+  // validate before parsing — fast-xml-parser won't always throw on bad XML
   parse<T = any>(xmlString: string): T {
     if (!xmlString || xmlString.trim() === '') {
       throw new XmlParseException('XML content is empty or contains only whitespace');

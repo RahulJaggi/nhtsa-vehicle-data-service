@@ -20,10 +20,7 @@ export class NhtsaIngestionService {
     this.concurrencyLimit = this.configService.get<number>('nhtsa.concurrency') ?? 5;
   }
 
-  /**
-   * Orchestrates the ingestion of makes and vehicle types from the NHTSA API into the database.
-   * Accepts an optional limit parameter to process only a subset of makes.
-   */
+  // pass a limit to process only N makes — handy for testing or dry runs
   async ingest(limit?: number): Promise<{ total: number; succeeded: number; failed: number }> {
     this.logger.log('Starting ingestion flow...');
 
@@ -53,6 +50,7 @@ export class NhtsaIngestionService {
     let succeeded = 0;
     let failed = 0;
 
+    // use a Set as a simple concurrency pool — wait for one to finish before adding more
     const pool = new Set<Promise<void>>();
 
     for (let i = 0; i < targets.length; i++) {
@@ -76,6 +74,7 @@ export class NhtsaIngestionService {
           succeeded++;
           this.logger.debug(`[Make Ingest] Successfully synced ${make.makeName} (ID: ${make.makeId}) with ${vehicleTypes.length} vehicle types`);
         } catch (error: any) {
+          // don't throw — one bad make shouldn't stop the rest
           failed++;
           this.logger.warn(
             `[Make Ingest] Failed to sync Make ${make.makeName} (ID: ${make.makeId}). Reason: ${error.message}`,

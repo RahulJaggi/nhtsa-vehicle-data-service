@@ -8,14 +8,11 @@ export class MakesRepository {
 
   constructor(private readonly prisma: PrismaService) {}
 
-  /**
-   * Persists a make and its associated vehicle types inside a transaction.
-   * Performs upsert operations so it is idempotent.
-   */
+  // everything in one transaction — if types fail, make doesn't get saved either
   async saveMakeWithTypes(makeData: TransformedMake): Promise<void> {
     try {
       await this.prisma.$transaction(async (tx) => {
-        // 1. Upsert the Make parent record
+        // upsert so re-running ingestion doesn't blow up on duplicates
         await tx.make.upsert({
           where: { makeId: makeData.makeId },
           update: { makeName: makeData.makeName },
@@ -25,13 +22,13 @@ export class MakesRepository {
           },
         });
 
-        // 2. Clear old vehicle types for this make (since they are 1:N)
+        // wipe old types first — easier than diffing, and NHTSA data can change
         await tx.vehicleType.deleteMany({
           where: { makeId: makeData.makeId },
         });
 
-        // 3. Create the new vehicle types
         if (makeData.vehicleTypes && makeData.vehicleTypes.length > 0) {
+          // dedupe by typeId just in case NHTSA sends duplicates in the response
           const uniqueTypesMap = new Map<number, string>();
           for (const vt of makeData.vehicleTypes) {
             uniqueTypesMap.set(vt.typeId, vt.typeName);
@@ -57,9 +54,7 @@ export class MakesRepository {
     }
   }
 
-  /**
-   * Retrieves paginated makes including their vehicle types to avoid N+1 query problems.
-   */
+  // always eager-load vehicle types to avoid N+1 on the GraphQL side
   async findMany(skip?: number, take?: number): Promise<any[]> {
     return this.prisma.make.findMany({
       skip,
@@ -73,9 +68,6 @@ export class MakesRepository {
     });
   }
 
-  /**
-   * Retrieves a specific make by makeId including its vehicle types.
-   */
   async findByMakeId(makeId: number): Promise<any | null> {
     return this.prisma.make.findUnique({
       where: { makeId },

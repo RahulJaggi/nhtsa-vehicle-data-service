@@ -13,9 +13,6 @@ export interface TransformedMake {
 
 @Injectable()
 export class NhtsaTransformerService {
-  /**
-   * Transforms a parsed GetAllMakes XML response object into an array of makes.
-   */
   transformMakes(parsedAllMakes: any): { makeId: number; makeName: string }[] {
     if (!parsedAllMakes?.Response?.Results) {
       return [];
@@ -26,6 +23,7 @@ export class NhtsaTransformerService {
       return [];
     }
 
+    // NHTSA returns a single object instead of an array when there's only one result
     const makesArray = Array.isArray(rawMakes) ? rawMakes : [rawMakes];
     const transformed: { makeId: number; makeName: string }[] = [];
 
@@ -40,6 +38,7 @@ export class NhtsaTransformerService {
         continue;
       }
 
+      // fast-xml-parser may parse numeric strings as numbers already, handle both
       const makeId = typeof makeIdStr === 'number' ? makeIdStr : parseInt(String(makeIdStr).trim(), 10);
       if (isNaN(makeId)) {
         continue;
@@ -54,9 +53,6 @@ export class NhtsaTransformerService {
     return transformed;
   }
 
-  /**
-   * Transforms a parsed GetVehicleTypesForMakeId XML response object into an array of vehicle types.
-   */
   transformVehicleTypes(parsedVehicleTypes: any): TransformedVehicleType[] {
     if (!parsedVehicleTypes?.Response?.Results) {
       return [];
@@ -67,6 +63,7 @@ export class NhtsaTransformerService {
       return [];
     }
 
+    // same single-vs-array edge case as in transformMakes
     const typesArray = Array.isArray(rawTypes) ? rawTypes : [rawTypes];
     const transformed: TransformedVehicleType[] = [];
 
@@ -74,6 +71,7 @@ export class NhtsaTransformerService {
       if (!rawType) {
         continue;
       }
+      // NHTSA uses VehicleTypeID in some responses and VehicleTypeId in others
       const typeIdStr = rawType.VehicleTypeID ?? rawType.VehicleTypeId;
       const typeName = rawType.VehicleTypeName;
 
@@ -95,9 +93,6 @@ export class NhtsaTransformerService {
     return transformed;
   }
 
-  /**
-   * Combines makes and their respective vehicle types into the final structured output.
-   */
   combineMakeAndTypes(
     make: { makeId: number; makeName: string },
     vehicleTypes: TransformedVehicleType[],
